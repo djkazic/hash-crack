@@ -2,27 +2,27 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="251" key="DIALOG_WIDTH"/>
-		<item value="414" key="DIALOG_Y_ORIGIN"/>
+		<item value="282" key="DIALOG_Y_ORIGIN"/>
+		<item value="780" key="DIALOG_X_ORIGIN"/>
 		<item value="360" key="DIALOG_HEIGHT"/>
-		<item value="678" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Segoe UI|8.25|0|WINDOWS|1|-11|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="Server" key="selection"/>
+		<item value="Accepted" key="selection"/>
 		<list key="findhistory">
+			<item value="Accepted"/>
+			<item value="ServerFind"/>
 			<item value="Server"/>
 			<item value="devMode"/>
 			<item value="Client"/>
 			<item value="Connected"/>
 			<item value="Attempt"/>
 			<item value="Thread"/>
-			<item value="hostIp"/>
-			<item value="valid"/>
 		</list>
 		<list key="replacehistory">
 			<item value="GUI.consoleText"/>

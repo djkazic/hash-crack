@@ -93,6 +93,7 @@ public class Main {
 		while (true) {
 			if(ServerFindThread.gotServer || !devMode) {
 				try {
+					if(ServerFindThread.gotServer)
 						System.out.println("[Attempting to connect...]");
 						connectionSocket = new Socket();
 						connectionAddress = new InetSocketAddress(hostIp, hostPort);
@@ -158,7 +159,7 @@ public class Main {
 													if(placeholder != 0) {
 														lastKnownHashes = (int) placeholder;
 													} else {
-														lastKnownHashes = 2400;
+														lastKnownHashes = 2300;
 													}
 												}
 												sendHashes = lastKnownHashes;
@@ -210,7 +211,6 @@ public class Main {
 			}
 		}
 	}
-	
 	public String getFileString(String filename) throws Exception {
 		String s13 = "";
 		InputStream in = getClass().getClassLoader().getResourceAsStream(filename);
@@ -225,7 +225,6 @@ public class Main {
 		in.close();
 		return s13;
 	}
-	
 	public static BigInteger power (int number, int exponent) {
 		BigInteger num = BigInteger.valueOf(1);
 		for (int i = 0; i < exponent; i ++) {
@@ -233,11 +232,9 @@ public class Main {
 		}
 		return num;
 	}
-	
 	public static void out(String output) {
 		System.out.println(output);
 	}
-	
 	public void writeString(String par0Str, DataOutputStream par1DataOutputStream) throws IOException {
 		if (par0Str.length() > 32767) {
 			throw new IOException("String too big");
@@ -247,7 +244,6 @@ public class Main {
 			return;
 		}
 	}
-	
 	public void writeBigInteger(BigInteger big, DataOutputStream par1DataOutputStream) throws IOException {
 		byte[] data = big.toByteArray();
 		int length = data.length;
