@@ -21,6 +21,7 @@ public class Startup {
 	public static JobManagement jb;
 	public static String status;
 	public static boolean devMode;
+	public static boolean killAll = false;
 	
 	public static String genSequenceFromBigInt(BigInteger num) {
 		StringBuilder sb = new StringBuilder();

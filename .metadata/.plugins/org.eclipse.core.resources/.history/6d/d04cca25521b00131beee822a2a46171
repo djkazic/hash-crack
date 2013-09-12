@@ -52,8 +52,8 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "127.0.0.1";
-				hostPort = 1200;
+				hostIp = "24.51.213.165";
+				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE
 			//hostIp = "192.168.1.10";

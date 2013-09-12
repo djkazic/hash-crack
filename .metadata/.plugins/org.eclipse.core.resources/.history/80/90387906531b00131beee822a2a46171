@@ -43,18 +43,6 @@ public class Client implements Runnable {
 				public void run() {
 					while (connected) {
 						try {
-							if(Startup.devMode) {
-								dos.write(0x06);
-								dos.flush();
-								dos.writeBoolean(true);
-								dos.flush();
-								Startup.devMode = false;
-							}
-							if(Startup.killAll) {
-								dos.write(0x03);
-								dos.flush();
-								Startup.killAll = false;
-							}
 							if (Startup.cracking) {
 								sentStop = false;
 								if (!applied) {
@@ -80,6 +68,12 @@ public class Client implements Runnable {
 								}
 								applied = false;
 								hasBlock = false;
+								
+								if(Startup.devMode) {
+									dos.write(0x06);
+									dos.writeBoolean(true);
+									dos.flush();
+								}
 							}
 							if (System.currentTimeMillis() - lastKeepAlive > 1000L) {
 								dos.write(0x00);

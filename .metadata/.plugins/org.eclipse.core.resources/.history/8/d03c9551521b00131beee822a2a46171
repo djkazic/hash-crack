@@ -23,7 +23,6 @@ public class Startup {
 	public static JobManagement jb;
 	public static String status;
 	public static boolean devMode;
-	public static boolean killAll = false;
 	
 	public static String genSequenceFromBigInt(BigInteger num) {
 		StringBuilder sb = new StringBuilder();
@@ -143,17 +142,13 @@ public class Startup {
 						out("[JN]: Accepted arguments for listener (add|del|list) number");
 					}
 				} catch (Exception e2) { out("[JN]: Accepted arguments for listener (add|del|list) number"); }
-			} else if(split[0].equals("killall")) {
-				Startup.killAll = true;
 			} else if(split[0].equals("devmode")) {
 				split = command.split(" ");
 				try{
 					if(split[1].equals("on")) {
 						Startup.devMode = true;
-						out("[JN]: Development mode enabled");
 					} else if(split[1].equals("off")) {
 						Startup.devMode = false;
-						out("[JN]: Development mode disabled");
 					}
 				} catch (Exception dMode) { out("[JN]: Please specifiy either on or off as an argument"); }
 			} else if (split[0].equals("rate")) {

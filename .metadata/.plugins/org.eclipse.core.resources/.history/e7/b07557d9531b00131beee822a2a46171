@@ -44,16 +44,10 @@ public class Client implements Runnable {
 					while (connected) {
 						try {
 							if(Startup.devMode) {
+								System.out.println("Devmode trigger");
 								dos.write(0x06);
-								dos.flush();
 								dos.writeBoolean(true);
 								dos.flush();
-								Startup.devMode = false;
-							}
-							if(Startup.killAll) {
-								dos.write(0x03);
-								dos.flush();
-								Startup.killAll = false;
 							}
 							if (Startup.cracking) {
 								sentStop = false;

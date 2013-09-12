@@ -45,15 +45,8 @@ public class Client implements Runnable {
 						try {
 							if(Startup.devMode) {
 								dos.write(0x06);
-								dos.flush();
 								dos.writeBoolean(true);
 								dos.flush();
-								Startup.devMode = false;
-							}
-							if(Startup.killAll) {
-								dos.write(0x03);
-								dos.flush();
-								Startup.killAll = false;
 							}
 							if (Startup.cracking) {
 								sentStop = false;
