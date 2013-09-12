@@ -8,6 +8,8 @@ import synthetics.net.Listener;
 public class Startup {
 	@SuppressWarnings("rawtypes")
 	public static ArrayList clients = new ArrayList();
+	@SuppressWarnings("rawtypes")
+	public static ArrayList clientMutexes = new ArrayList();
 	public static Listener l;
 	public static Client c;
 	@SuppressWarnings("rawtypes")

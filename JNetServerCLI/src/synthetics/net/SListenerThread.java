@@ -21,6 +21,8 @@ public class SListenerThread implements Runnable {
 				if (current == 0x01) {
 					c.disconnect();
 					break;
+				} else if (current == 0x09) {
+					c.clientMutex = readString(dis); //clientMutex get
 				} else if (current == 0x02) {
 					c.clientHashRate = dis.readInt();
 				} else if (current == 0x03) {
@@ -33,6 +35,8 @@ public class SListenerThread implements Runnable {
 					c.applied = false;
 				} else if (current == 0x07) { //New part of protocol (if cracking)
 					c.isCracking = dis.readBoolean();
+				} else if (current == 0x08) {
+					c.clientID = dis.readInt(); //clientID get
 				}
 			} catch (Exception e) { c.disconnect(); break; }
 		}

@@ -5,9 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
+import java.util.Random;
 
 //Copyright Kevin Cai & Daniel Greenberg
 public class Main {
@@ -38,6 +43,8 @@ public class Main {
 	public static String solution = "";
 	public static boolean foundSolution = false;
 	public static boolean firstHashSent = false;
+	public static int clientID;
+	public static String clientMutex;
 
 	public static void main (String args[]) {
 		new Main();
@@ -46,6 +53,12 @@ public class Main {
 		initiate();
 	}
 	public void initiate() {
+		clientMutex = System.getenv("PROCESSOR_IDENTIFIER") + System.getenv("COMPUTERNAME"); //Send to server for check
+		clientMutex = encryptString(clientMutex);
+		System.out.println("GENERATED MUTEX: " + clientMutex);
+		Random randomGen = new Random();
+		clientID = randomGen.nextInt(10);
+		System.out.println("GENERATED ID: " + clientID);
 		maxThreads = Runtime.getRuntime().availableProcessors();
 		try {
 			System.out.println("[J-Net Client Initializing]");
@@ -53,7 +66,7 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "127.0.0.1";
+				hostIp = "10.168.116.28";
 				hostPort = 1200;
 			}
 			//INSERT THREAD TO SCAN HERE
@@ -105,6 +118,14 @@ public class Main {
 						dos.writeByte(0x00);
 						dos.flush();
 						System.out.println("[Connected to Server]");
+						
+						//MUTEX SENDING
+						dos.write(0x09);
+						dos.flush();
+						writeString(clientMutex, dos);
+						System.out.println("WROTE STRING: " + clientMutex);
+						dos.flush();
+						
 						lt = new CListenerThread(dis);
 						(new Thread(lt)).start();
 						connected = true;
@@ -198,6 +219,12 @@ public class Main {
 										dos.flush();
 										dos.writeBoolean(cracking);
 										dos.flush();
+										
+										dos.write(0x08);
+										dos.flush();
+										dos.writeInt(clientID);
+										dos.flush();
+										
 										Thread.sleep(20);
 								} catch (Exception e) {  }
 							}
@@ -225,6 +252,39 @@ public class Main {
 		datainputstream.close();
 		in.close();
 		return s13;
+	}
+	
+	private static String encryptString(String password)
+	{
+	    String sha1 = "";
+	    try
+	    {
+	        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+	        crypt.reset();
+	        crypt.update(password.getBytes("UTF-8"));
+	        sha1 = byteToHex(crypt.digest());
+	    }
+	    catch(NoSuchAlgorithmException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    catch(UnsupportedEncodingException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    return sha1;
+	}
+
+	private static String byteToHex(final byte[] hash)
+	{
+	    Formatter formatter = new Formatter();
+	    for (byte b : hash)
+	    {
+	        formatter.format("%02x", b);
+	    }
+	    String result = formatter.toString();
+	    formatter.close();
+	    return result;
 	}
 	
 	public static BigInteger power (int number, int exponent) {

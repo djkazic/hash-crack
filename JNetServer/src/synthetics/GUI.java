@@ -101,7 +101,7 @@ public class GUI extends JFrame {
 								for (int i = 0; i < Startup.clients.size(); i ++) {
 									Startup.c = (Client)Startup.clients.get(i);
 									if (Startup.c.isConnected()) {
-										out("     [#] Client " + Startup.c.cs.getInetAddress().getHostAddress() + " " + Startup.c.clientHashRate + "kH/s" + " || Hashing: " + Startup.c.isCracking);
+										out("     [" + Startup.c.clientID + "] Client " + Startup.c.cs.getInetAddress().getHostAddress() + " " + Startup.c.clientHashRate + "kH/s" + " || Hashing: " + Startup.c.isCracking);
 									}
 								}
 							}

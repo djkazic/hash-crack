@@ -49,8 +49,8 @@ public class JobManagement implements Runnable {
 							
 							//DEPRECATED SERVER-SIDE ZERO CHECK
 							if(clientRate == 0 || totalRate == 0) {
-								totalRate = (float) (2300 * conSize);
-								clientRate = 2300;
+								totalRate = (float) (2400 * conSize);
+								clientRate = 2400;
 							}
 							if(clientRate == 0) {
 								System.out.println("CAUGHT ZERO!");

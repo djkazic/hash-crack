@@ -9,6 +9,8 @@ import synthetics.net.Listener;
 public class Startup {
 	@SuppressWarnings("rawtypes")
 	public static ArrayList clients = new ArrayList();
+	@SuppressWarnings("rawtypes")
+	public static ArrayList clientMutexes = new ArrayList();
 	public static Listener l;
 	public static Client c;
 	@SuppressWarnings("rawtypes")
@@ -108,7 +110,7 @@ public class Startup {
 					for (int i = 0; i < Startup.clients.size(); i ++) {
 						Startup.c = (Client)Startup.clients.get(i);
 						if (Startup.c.isConnected()) {
-							out("     [#] Client " + Startup.c.cs.getInetAddress().getHostAddress() + " " + Startup.c.clientHashRate + "kH/s" + " || Hashing: " + Startup.c.isCracking);
+							out("     [" + Startup.c.clientID + "] Client " + Startup.c.cs.getInetAddress().getHostAddress() + " " + Startup.c.clientHashRate + "kH/s" + " || Hashing: " + Startup.c.isCracking);
 						}
 					}
 				}

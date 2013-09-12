@@ -9,6 +9,8 @@ import synthetics.JobManagement;
 import synthetics.Startup;
 
 public class Client implements Runnable {
+	public static boolean dupeDisconnect = false;
+	public String clientMutex;
 	public int average = -1;
 	public boolean sentStop = false;
 	public BigInteger[] bounds = new BigInteger[2];
@@ -24,25 +26,37 @@ public class Client implements Runnable {
 	public SListenerThread lt;
 	public Socket cs;
 	public Client thisClient;
+	public int clientID;
 	public Client(Socket soc) {
 		connected = false;
 		this.cs = soc;
 		thisClient = this;
 	}
+	
 	@SuppressWarnings("unchecked")
 	public void run() {
 		try {
 			dos = new DataOutputStream(cs.getOutputStream());
 			dis = new DataInputStream(cs.getInputStream());
-			Startup.clients.add(this);
+			//if(!Startup.clients.contains(this)) { //change to ArrayList of clientIDs
+			Startup.clients.add(this); //keep this
 			cs.setSoTimeout(3000);
 			dos.write(0x00);
 			dos.flush();
 			dis.read();
 			connected = true;
-			Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
+			Thread.sleep(5);
+			if(!Startup.clientMutexes.contains(this.clientMutex)) {
+				Startup.clientMutexes.add(this.clientMutex);
+				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
+			} else {
+				dos.flush();
+				dos.write(0x03);
+				dos.flush();
+				dupeDisconnect = true;
+			}
 			(new Thread(new Runnable() {
 				public void run() {
 					while (connected) {
@@ -97,6 +111,7 @@ public class Client implements Runnable {
 			})).start();
 		} catch (Exception e) {  }
 	}
+	
 	@SuppressWarnings("unchecked")
 	public void disconnect() {
 		String host = cs.getInetAddress().getHostAddress();
@@ -110,7 +125,11 @@ public class Client implements Runnable {
 			System.out.println("Stored block with range of " + bounds[1].subtract(bounds[0]).toString());
 			JobManagement.incomplete.add(new BigInteger[] { bounds[0], bounds[1] });
 		}
-		Startup.out(host + " disconnected");
+		if(!dupeDisconnect) {
+			Startup.out("[" + clientID + " | " + host + " disconnected]");
+		} else {
+			dupeDisconnect = false;
+		}
 		removeFromList(this);
 	}
 	
