@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -53,7 +55,20 @@ public class Main {
 		initiate();
 	}
 	public void initiate() {
-		clientMutex = System.getenv("PROCESSOR_IDENTIFIER") + System.getenv("COMPUTERNAME"); //Send to server for check
+		try {
+			InetAddress ip = InetAddress.getLocalHost();
+			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+			if(network == null) {
+				network = NetworkInterface.getByName("eth0");
+			}
+			byte[] mac = network.getHardwareAddress();
+			StringBuilder sb = new StringBuilder();  
+	        for (int i = 0; i < mac.length; i++) {  
+	            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));       
+	        }
+	        clientMutex = sb.toString(); //Send to server for check
+		} catch (Exception e1) {}
+		System.out.println("PRE ENCRYPTION MUTEX: " + clientMutex);
 		clientMutex = encryptString(clientMutex);
 		System.out.println("GENERATED MUTEX: " + clientMutex);
 		Random randomGen = new Random();
@@ -66,8 +81,8 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "10.168.116.28";
-				hostPort = 1200;
+				hostIp = "24.51.213.165";
+				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE
 			//hostIp = "192.168.1.10";
@@ -107,7 +122,7 @@ public class Main {
 		while (true) {
 			if(ServerFindThread.gotServer || !devMode) {
 				try {
-						System.out.println("[Attempting to connect...]");
+						System.out.println("[Attempting to connect...] -- IP: " + hostIp);
 						connectionSocket = new Socket();
 						connectionAddress = new InetSocketAddress(hostIp, hostPort);
 						connectionSocket.setSoTimeout(2500);
@@ -123,7 +138,7 @@ public class Main {
 						dos.write(0x09);
 						dos.flush();
 						writeString(clientMutex, dos);
-						System.out.println("WROTE STRING: " + clientMutex);
+						System.out.println("WROTE STRING HASH: " + clientMutex);
 						dos.flush();
 						
 						lt = new CListenerThread(dis);

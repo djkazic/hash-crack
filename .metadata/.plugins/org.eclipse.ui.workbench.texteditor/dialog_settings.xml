@@ -2,27 +2,27 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="251" key="DIALOG_WIDTH"/>
-		<item value="282" key="DIALOG_Y_ORIGIN"/>
-		<item value="780" key="DIALOG_X_ORIGIN"/>
+		<item value="150" key="DIALOG_Y_ORIGIN"/>
 		<item value="360" key="DIALOG_HEIGHT"/>
+		<item value="939" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Segoe UI|8.25|0|WINDOWS|1|-11|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="Accepted" key="selection"/>
+		<item value="" key="selection"/>
 		<list key="findhistory">
-			<item value="Accepted"/>
-			<item value="ServerFind"/>
-			<item value="Server"/>
-			<item value="devMode"/>
-			<item value="Client"/>
-			<item value="Connected"/>
-			<item value="Attempt"/>
-			<item value="Thread"/>
+			<item value="Startup.mute"/>
+			<item value="clientID"/>
+			<item value="0x0"/>
+			<item value="0x00"/>
+			<item value="clients"/>
+			<item value="inbound"/>
+			<item value="INbound"/>
+			<item value="Inbound"/>
 		</list>
 		<list key="replacehistory">
 			<item value="GUI.consoleText"/>

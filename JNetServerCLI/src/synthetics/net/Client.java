@@ -47,8 +47,8 @@ public class Client implements Runnable {
 			connected = true;
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
-			Thread.sleep(5);
-			if(!Startup.clientMutexes.contains(this.clientMutex)) {
+			Thread.sleep(50);
+			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
 				Startup.clientMutexes.add(this.clientMutex);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
@@ -69,9 +69,9 @@ public class Client implements Runnable {
 								Startup.devMode = false;
 							}
 							if(Startup.killAll) {
+								System.out.println("NUKING LEFTOVERS, SC SIZE: " + Startup.clients.size());
 								dos.write(0x03);
 								dos.flush();
-								Startup.killAll = false;
 							}
 							if (Startup.cracking) {
 								sentStop = false;
@@ -134,8 +134,10 @@ public class Client implements Runnable {
 	}
 	
 	public void removeFromList(Client cl) {
+		Startup.clientMutexes.remove(cl.clientMutex);
 		Startup.clients.remove(cl);
 	}
+	
 	public boolean isConnected() {
 		return connected;
 	}

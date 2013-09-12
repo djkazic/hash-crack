@@ -142,8 +142,11 @@ public class GUI extends JFrame {
 									out("[JN]: Accepted arguments for listener (add|del|list) number");
 								}
 							} catch (Exception e2) { out("[JN]: Accepted arguments for listener (add|del|list) number"); }
-						} else if(split[0].equals("resetall")) {
-							Startup.killAll = true;
+						} else if(split[0].equals("killall")) {
+							while(Startup.clients.size() > 0) {
+								Startup.killAll = true;
+							}
+							Startup.killAll = false;
 						} else if(split[0].equals("devmode")) {
 							split = command.split(" ");
 							try{

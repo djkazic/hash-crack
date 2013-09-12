@@ -152,7 +152,10 @@ public class Startup {
 					}
 				} catch (Exception e2) { out("[JN]: Accepted arguments for listener (add|del|list) number"); }
 			} else if(split[0].equals("killall")) {
-				Startup.killAll = true;
+				while(clients.size() > 0) {
+					killAll = true;
+				}
+				killAll = false;
 			} else if(split[0].equals("devmode")) {
 				split = command.split(" ");
 				try{
