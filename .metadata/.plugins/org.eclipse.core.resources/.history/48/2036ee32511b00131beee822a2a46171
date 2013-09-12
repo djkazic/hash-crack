@@ -68,12 +68,6 @@ public class Client implements Runnable {
 								}
 								applied = false;
 								hasBlock = false;
-								
-								if(Startup.devMode) {
-									dos.write(0x06);
-									dos.writeBoolean(true);
-									dos.flush();
-								}
 							}
 							if (System.currentTimeMillis() - lastKeepAlive > 1000L) {
 								dos.write(0x00);

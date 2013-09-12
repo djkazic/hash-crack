@@ -20,6 +20,7 @@ public class Startup {
 	public static char[] array;
 	public static JobManagement jb;
 	public static String status;
+	public static boolean devMode;
 	
 	public static String genSequenceFromBigInt(BigInteger num) {
 		StringBuilder sb = new StringBuilder();

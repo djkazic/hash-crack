@@ -49,7 +49,6 @@ public class Main {
 		try {
 			System.out.println("[J-Net Client Initializing]");
 			if(devMode) {
-				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
 				hostIp = "24.51.213.165";

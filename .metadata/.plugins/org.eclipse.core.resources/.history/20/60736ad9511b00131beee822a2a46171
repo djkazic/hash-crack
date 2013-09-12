@@ -140,13 +140,11 @@ public class GUI extends JFrame {
 							} catch (Exception e2) { out("[JN]: Accepted arguments for listener (add|del|list) number"); }
 						} else if(split[0].equals("devmode")) {
 							split = command.split(" ");
-							try{
-								if(split[1].equals("on")) {
-									Startup.devMode = true;
-								} else if(split[1].equals("off")) {
-									Startup.devMode = false;
-								}
-							} catch (Exception dMode) { out("[JN]: Please specifiy either on or off as an argument"); }
+							if(split[1].equals("on")) {
+								Startup.devMode = true;
+							} else if(split[1].equals("off")) {
+								Startup.devMode = false;
+							}
 						} else if (split[0].equals("rate")) {
 							out(Startup.getHashRate() + "kH/s");
 						} else if (split[0].equals("stop")) {
