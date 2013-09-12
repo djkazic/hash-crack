@@ -66,7 +66,6 @@ public class Startup {
 		out("[JN]: J-Net Distributed MD5 Hash Cracker");
 		out("> Initializing...");
 		out("> Type help for information");
-		out("");
 		jb = new JobManagement();
 		(new Thread(jb)).start();
 		(new Thread(new Runnable() {
