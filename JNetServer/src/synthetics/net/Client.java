@@ -26,7 +26,7 @@ public class Client implements Runnable {
 	public SListenerThread lt;
 	public Socket cs;
 	public Client thisClient;
-	public int clientID;
+	public String clientID;
 	public Client(Socket soc) {
 		connected = false;
 		this.cs = soc;
@@ -47,8 +47,8 @@ public class Client implements Runnable {
 			connected = true;
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
-			Thread.sleep(5);
-			if(!Startup.clientMutexes.contains(this.clientMutex)) {
+			Thread.sleep(50);
+			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
 				Startup.clientMutexes.add(this.clientMutex);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
@@ -69,13 +69,9 @@ public class Client implements Runnable {
 								Startup.devMode = false;
 							}
 							if(Startup.killAll) {
-								if(Startup.clients.size() == 0) {
-									Startup.killAll = false;
-								} else {
-									System.out.println("NUKING LEFTOVERS");
-									dos.write(0x03);
-									dos.flush();
-								}
+								System.out.println("NUKING LEFTOVERS, SC SIZE: " + Startup.clients.size());
+								dos.write(0x03);
+								dos.flush();
 							}
 							if (Startup.cracking) {
 								sentStop = false;

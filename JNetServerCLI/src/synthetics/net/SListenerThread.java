@@ -36,7 +36,7 @@ public class SListenerThread implements Runnable {
 				} else if (current == 0x07) { //New part of protocol (if cracking)
 					c.isCracking = dis.readBoolean();
 				} else if (current == 0x08) {
-					c.clientID = dis.readInt(); //clientID get
+					c.clientID = readString(dis); //clientID get
 				}
 			} catch (Exception e) { c.disconnect(); break; }
 		}

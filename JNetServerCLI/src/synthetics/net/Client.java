@@ -26,7 +26,7 @@ public class Client implements Runnable {
 	public SListenerThread lt;
 	public Socket cs;
 	public Client thisClient;
-	public int clientID;
+	public String clientID;
 	public Client(Socket soc) {
 		connected = false;
 		this.cs = soc;

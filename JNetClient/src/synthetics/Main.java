@@ -45,7 +45,7 @@ public class Main {
 	public static String solution = "";
 	public static boolean foundSolution = false;
 	public static boolean firstHashSent = false;
-	public static int clientID;
+	public static String clientID;
 	public static String clientMutex;
 
 	public static void main (String args[]) {
@@ -71,8 +71,7 @@ public class Main {
 		System.out.println("PRE ENCRYPTION MUTEX: " + clientMutex);
 		clientMutex = encryptString(clientMutex);
 		System.out.println("GENERATED MUTEX: " + clientMutex);
-		Random randomGen = new Random();
-		clientID = randomGen.nextInt(10);
+		clientID = getID();
 		System.out.println("GENERATED ID: " + clientID);
 		maxThreads = Runtime.getRuntime().availableProcessors();
 		try {
@@ -81,7 +80,7 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "24.51.213.165";
+				hostIp = "127.0.0.1";
 				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE
@@ -237,7 +236,7 @@ public class Main {
 										
 										dos.write(0x08);
 										dos.flush();
-										dos.writeInt(clientID);
+										writeString(clientID, dos);
 										dos.flush();
 										
 										Thread.sleep(20);
@@ -267,6 +266,24 @@ public class Main {
 		datainputstream.close();
 		in.close();
 		return s13;
+	}
+	
+	private static String getID() {
+		String output = "";
+		int randAIndex;
+		int randNIndex;
+		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVXYZ";
+		String numbers = "0123456789";
+	    int AL = alphabet.length();
+	    int NL = numbers.length();
+	    Random rGen = new Random();
+	    for (int i=0; i<2; i++) {
+	    	randAIndex = rGen.nextInt(AL);
+	    	randNIndex = rGen.nextInt(NL);
+	        output = Character.toString(alphabet.charAt(randAIndex));
+	        output += Character.toString(numbers.charAt(randNIndex));
+	    }
+	    return output;
 	}
 	
 	private static String encryptString(String password)
