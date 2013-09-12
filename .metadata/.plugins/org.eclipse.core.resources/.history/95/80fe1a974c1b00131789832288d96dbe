@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-//Copyright Kevin Cai & Daniel Greenberg
 public class Main {
 	public static int[] rateArray = new int[2];
 	public static BigInteger[] bounds = new BigInteger[2];
