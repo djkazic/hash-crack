@@ -1,0 +1,53 @@
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.util.Random;
+
+
+public class ServerFindThread implements Runnable {
+
+	public static String ownIP;
+	public static String rawIP;
+	InetAddress current_addr;
+	static SocketAddress valid_addr;
+	public static boolean gotServer = false;
+	
+	public void run() {
+		Random tID = new Random();
+		System.out.println("Thread ID: " + tID.nextInt(10));
+		try {
+			current_addr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) { e.printStackTrace();}
+		ownIP = current_addr.getHostAddress();
+		System.out.println(ownIP);
+		rawIP = stripIP(ownIP);
+		loopDetect(rawIP);
+	}
+	
+	public static String stripIP(String mainIP) {
+		String[] octets = mainIP.split("\\.");
+		String output = octets[0] + "." + octets[1] + "." + octets[2] + ".";
+		return output;
+	}
+
+	public static void loopDetect(String incIP) {
+		while(valid_addr == null) {
+			for(int i=0; i<=255; i++) {
+				Socket detectSocket = new Socket();
+				SocketAddress detectAddress = new InetSocketAddress(incIP+i, 8888);
+				try {
+					detectSocket.connect(detectAddress, 5);
+					detectSocket.close();
+					System.out.println("Server found!");
+					Main.hostIp = incIP+i;
+					Main.hostPort = 8888;
+					gotServer = true;
+					break;
+				} catch (IOException e) {}
+			}
+		}
+	}
+}

@@ -1,0 +1,291 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Startup {
+	@SuppressWarnings("rawtypes")
+	public static ArrayList clients = new ArrayList();
+	public static Listener l;
+	public static Client c;
+	public static ArrayList<Integer> listeners = new ArrayList<Integer>();
+	public static ArrayList<Listener> listenerClasses = new ArrayList<Listener>();
+	public static long initiateTime = System.currentTimeMillis();
+	public static boolean cracking = false;
+	public static String currentHashString = "";
+	public static int connectedNumber = 0;
+	public static BigInteger startCrackNumber = BigInteger.valueOf(0);
+	public static boolean crackNumbers = false;
+	public static boolean crackUpperCase = false;
+	public static boolean crackSpecial = false;
+	public static int threads = 0;
+	public static char[] array;
+	public static String hashRate;
+	public static String genSequenceFromBigInt(BigInteger num) {
+		StringBuilder sb = new StringBuilder();
+		while(num.compareTo(BigInteger.ZERO) == 1) {
+			sb.append(array[num.mod(BigInteger.valueOf(array.length - 1)).intValue()]);
+			num = num.divide(BigInteger.valueOf(array.length - 1));
+		}
+		return sb.reverse().toString();
+	}
+	public static void main (String[] args) throws InterruptedException {
+		out("J-Net Distributed MD5 Hash Cracker");
+		out("Initializing...");
+		Thread.sleep(2000);
+		out("Type help for information");
+		out("");
+		String command;
+		String split[];
+		int number;
+		(new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					try {
+						if (cracking) {
+							int total = 0;
+							BigInteger lowest = BigInteger.valueOf(-1);
+							for (int i = 0; i < clients.size(); i ++) {
+								c = (Client)clients.get(i);
+								if (c.isConnected()) {
+									total += c.clientHashRate;
+									if (lowest.compareTo(BigInteger.valueOf(-1)) == 0) {
+										lowest = c.clientLast;
+									} else if (c.clientLast.compareTo(lowest) == -1) {
+										lowest = c.clientLast;
+									}
+								}
+							}
+							hashRate = "Speed: " + total + "MH/s";
+							outsl(hashRate);
+							outsl("\r" + hashRate);
+						}
+					} catch (Exception e) {  }
+					try { Thread.sleep(1000); } catch (Exception e) {  }
+				}
+			}
+		})).start();
+		while (true) {
+			in = new Scanner(System.in);
+			command = in.nextLine();
+			split = command.split(" ");
+			if (split[0].equals("list")) {
+				if (getConnectedNumbers() == 0) {
+					out("There are no connected clients");
+				} else {
+					for (int i = 0; i < clients.size(); i ++) {
+						c = (Client)clients.get(i);
+						if (c.isConnected()) {
+							out("Client " + c.cs.getInetAddress().getHostAddress() + " " + c.clientHashRate + "MH/s");
+						}
+					}
+				}
+			}
+			else if (split[0].equals("exit")) {
+				break;
+			} else if (split[0].equals("listener")) {
+				split = command.split(" ");
+				try {
+					if (split[1].equals("add")) {
+						try {
+							number = Integer.parseInt(split[2]);
+							if (!listeners.contains(number)) {
+								listeners.add(number);
+								out("Added listener " + number);
+								addListener(number);
+							} else {
+								out("Listener " + number + " already existed");
+							}
+						} catch (Exception e) { out("Please use a number as an argument"); }
+					} else if (split[1].equals("del")) {
+						try {
+							number = Integer.parseInt(split[2]);
+							if (!listeners.contains(number)) {
+								out("Listener " + number + " already existed");
+							} else {
+								listeners.remove((Object)number);
+								out("Deleted listener " + number);
+								delListener(number);
+							}
+						} catch (Exception e) { e.printStackTrace(); out("Please use a number as an argument"); }
+					} else if (split[1].equals("list")) {
+						if (listeners.size() == 0) {
+							System.out.println("There are no listeners");
+						} else {
+							for (int i = 0; i < listeners.size(); i ++) {
+								out(listeners.get(i) + "");
+							}
+						}
+					} else {
+						out("Accepted arguments for listener (add|del|list) number");
+					}
+				} catch (Exception e) { out("Accepted arguments for listener (add|del|list) number"); }
+			} else if (split[0].equals("rate")) {
+				out(getHashRate() + "MH/s");
+			} else if (split[0].equals("stop")) {
+				stopCracking();
+			} else if (split[0].equals("crack")) {
+				try {
+					if (!cracking) {
+						String arguments = command.replaceAll(split[1], "");
+						currentHashString = split[1];
+						threads = Integer.parseInt(split[3]);
+						int crackNumber = Integer.valueOf(split[2]);
+						array = comblist;
+						startCrackNumber = BigInteger.valueOf(array.length - 2).pow(crackNumber - 1);
+						startCrackNumber = BigInteger.valueOf(array.length - 2).pow(crackNumber - 1).add(BigInteger.valueOf(1)); //TODO FIX THIS!!!
+						if (startCrackNumber.compareTo(BigInteger.valueOf(2)) == 0) {
+							startCrackNumber = BigInteger.valueOf(1);
+						}
+						//System.out.println(startCrackNumber.toString());
+					}
+					startCracking();
+				} catch (Exception e) {
+					out("crack (hash) (start length) (threads)");
+				}
+			}
+			else if (split[0].equals("status")) {
+				if (cracking) {
+					out("Solving " + currentHashString + " @" + getHashRate() + "MH/s for " + (Float.valueOf(System.currentTimeMillis() - initiateTime)/1000F) + "ms");
+				} else {
+					out("Not solving a hash");
+				}
+			}
+			else if (split[0].equals("help")) {
+				out("listener (add|del|list) number - adds a port on which to listen");
+				out("help - outputs the help");
+				out("rate - retrieves hash rate (mh/s)");
+				out("crack (hash) (start length) (threads)");
+				out("list - lists connected clients");
+				out("stop - stops cracking");
+				out("status - gives a status on the current crack");
+			} else {
+				out("Unknown command. Try help");
+			}
+		}
+		out("Thankyou for using this tool. I hope you were able to find what you were looking for");
+		System.exit(0);
+	}
+	public static void disconnectEvent(String ip, boolean disconnect, Client c) {
+		if (disconnect) { out(ip + " disconnected"); }
+		if (cracking) {
+			try {
+				out("Reorganising cracking");
+				out("Syncing threads");
+				cracking = false;
+				Thread.sleep(4000);
+				int num = getConnectedNumbers();
+				if (num != 0) {
+					out("Threads synced. Restarting cracking with " + getConnectedNumbers());
+					connectedNumber = getConnectedNumbers();
+					BigInteger lowestNumber = BigInteger.valueOf(-1);
+					for (int i = 0 ; i < clients.size(); i ++) {
+						c = (Client)clients.get(0);
+						if (c.isConnected()) {
+							if (lowestNumber.toString().equals("-1")) {
+								if (c.clientLast.compareTo(lowestNumber) == -1) {
+									lowestNumber = c.clientLast;
+								}
+							} else {
+								lowestNumber = c.clientLast;
+							}
+						}
+					}
+					if (!disconnect) {
+						c.clientLast = lowestNumber;
+					}
+					startCrackNumber = lowestNumber;
+					setHashInitialisation();
+					cracking = true;
+				} else {
+					out("There are no remaining clients. Stopping cracking");
+				}
+			} catch (Exception e) {  }
+		}
+	}
+	public static int getConnectedNumbers() {
+		int num = 0;
+		for (int i = 0; i < clients.size(); i ++) {
+			c = (Client)clients.get(i);
+			if (c.isConnected()) {
+				num += 1;
+			}
+		}
+		return num;
+	}
+	public static void stopCracking() {
+		if (cracking) {
+			cracking = false;
+			out("Stopped cracking");
+		} else {
+			out("The hash solver is not cracking");
+		}
+	}
+	public static void setHashInitialisation() {
+		int additionNum = 0;
+		for (int i = 0; i < clients.size(); i ++) {
+			c = (Client)clients.get(i);
+			if (c.isConnected()) {
+				c.crackAddition = additionNum;
+				additionNum += 1;
+			}
+		}
+	}
+	public static void startCracking() {
+		if (cracking) {
+			out("Already solving a hash");
+		} else {
+			setHashInitialisation();
+			connectedNumber = getConnectedNumbers();
+			initiateTime = System.currentTimeMillis();
+			cracking = true;
+			out("Attempting to solve hash " + currentHashString);
+		}
+	}
+	public static float getHashRate() {
+		float i = 0;
+		for (int i2 = 0; i2 < clients.size(); i2 ++) {
+			c = (Client)clients.get(i2);
+			if (c.connected) {
+				i += c.clientHashRate;
+			}
+		}
+		return i;
+	}
+	public static void delListener(int number) {
+		try {
+			for (int i = 0; i < listenerClasses.size(); i ++) {
+				l = listenerClasses.get(i);
+				if (l.port == number) {
+					l.stop();
+					l.ss.close();
+					listenerClasses.remove(i);
+					for (int i2 = 0; i2 < listeners.size(); i2 ++) {
+						if (l.port == listeners.get(i2)) {
+							listeners.remove(i2);
+							break;
+						}
+					}
+					break;
+				}
+			}
+		} catch (Exception e) {  }
+	}
+	public static void success(String hash) {
+		out("Solved hash: " + currentHashString + " as " + hash + " in " + (System.currentTimeMillis() - initiateTime) + "ms");
+		stopCracking();
+	}
+	public static void addListener(int number) {
+		l = new Listener(number);
+		listenerClasses.add(l);
+		Thread t = new Thread(l);
+		t.start();
+	}
+	public static void out(String output) {
+		System.out.println(output);
+	}
+	public static void outsl(String output) {
+		System.out.print(output);
+	}
+	public static char[] comblist = new char[] {'a','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9','0','!','£','$','%',',','.','?','@','#','#'};
+	private static Scanner in;
+}

@@ -1,0 +1,17 @@
+import javax.swing.JFrame;
+
+public class CPanel {
+	public static void main(String[] args) {
+        new CPanel();
+    }
+	
+	public CPanel()
+	{
+		JFrame guiFrame = new JFrame();
+		guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        guiFrame.setTitle("Example GUI");
+        guiFrame.setSize(300,250);
+        
+        guiFrame.setLocationRelativeTo(null);
+	}
+}

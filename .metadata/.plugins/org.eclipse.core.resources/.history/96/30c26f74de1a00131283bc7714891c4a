@@ -1,0 +1,32 @@
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+
+public class ServerFindThread implements Runnable {
+
+	public static String ownIP;
+	public static String rawIP;
+	InetAddress current_addr;
+	
+	public void run() {
+		try {
+			current_addr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) { e.printStackTrace();}
+		ownIP = current_addr.getHostAddress();
+		System.out.println(ownIP);
+		rawIP = stripIP(ownIP);
+		loopDetect(rawIP);
+	}
+	
+	public static String stripIP(String mainIP) {
+		String[] octets = mainIP.split("\\.");
+		String output = octets[0] + "." + octets[1] + "." + octets[2] + ".";
+		return output;
+	}
+
+	public static void loopDetect(String incIP) { 
+		for(int i=0; i<=255; i++) {
+			System.out.println(incIP+i);
+		}
+	}
+}

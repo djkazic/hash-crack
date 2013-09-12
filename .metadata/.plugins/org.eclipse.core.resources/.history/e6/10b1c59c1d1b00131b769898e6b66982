@@ -1,0 +1,28 @@
+import javax.swing.JFrame;
+
+import java.util.Scanner;
+
+@SuppressWarnings("serial")
+public class GUI extends JFrame {
+	
+	//Other constructors
+	public static JobManagement jb;
+	@SuppressWarnings("unchecked")
+	public GUI() {
+		Scanner in = new Scanner(System.in);
+		jb = new JobManagement();
+		while(true) {}
+	}
+		
+	public static void out(String output) {
+		System.out.println(output);
+	}
+	
+	public static void update() {
+		for (int i = 0; i < Startup.clients.size(); i ++) {
+			Startup.c = (Client)Startup.clients.get(i);
+			if (Startup.c.isConnected()) {
+			}
+		}
+	}
+}

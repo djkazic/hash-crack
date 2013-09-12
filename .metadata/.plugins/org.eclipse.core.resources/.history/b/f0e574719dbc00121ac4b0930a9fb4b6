@@ -1,0 +1,26 @@
+import javax.swing.*;
+
+@SuppressWarnings("serial")
+public class GUI extends JFrame{
+	JPanel pRate;
+	JButton bRate;
+	JLabel lRate;
+
+	public GUI() {
+		pRate = new JPanel();
+		bRate = new JButton();
+		lRate = new JLabel();
+		
+		pRate.add(bRate);
+		pRate.add(lRate);
+		this.add(pRate);
+	}
+	
+	public static void initGui() {
+		GUI gui = new GUI();
+		gui.setTitle("J-Net Distributed MD5 Hash Cracker");
+		gui.setSize(300,200);
+		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gui.setVisible(true);
+	}
+}

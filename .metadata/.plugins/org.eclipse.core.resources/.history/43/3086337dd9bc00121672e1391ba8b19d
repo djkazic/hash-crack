@@ -1,0 +1,71 @@
+import javax.swing.*;
+
+@SuppressWarnings("serial")
+public class GUI extends JFrame{
+	JPanel ratePanel = new JPanel();
+		JButton rateButton = new JButton("Rate");
+	JPanel listPanel = new JPanel();
+		JButton listButton = new JButton("List");
+	JPanel listenerPanel = new JPanel();
+		JButton listenerButton = new JButton("Listener");
+	JPanel consoleInputPanel = new JPanel();
+		JTextField consoleInput = new JTextField(60);
+	JPanel consolePanel = new JPanel();
+		JTextArea console = new JTextArea();
+
+	public GUI() {
+		//Setting panels location and size
+		consolePanel.setLayout(null);
+			consolePanel.setLocation(10,10);
+			consolePanel.setSize(330,20);
+		consoleInputPanel.setLayout(null);
+			consoleInputPanel.setLocation(10,210);
+			consoleInputPanel.setSize(460,40);
+		ratePanel.setLayout(null);
+			ratePanel.setLocation(370,10);
+			ratePanel.setSize(250,30);
+		listPanel.setLayout(null);
+			listPanel.setLocation(370,50);
+			listPanel.setSize(250,30);
+		listenerPanel.setLayout(null);
+			listenerPanel.setLocation(370,90);
+			listenerPanel.setSize(250,30);
+		
+		
+		//Setting button location and size
+		console.setLocation(10,10);
+			console.setSize(340,120);
+		consoleInput.setLocation(0,0);
+			consoleInput.setSize(460,20);
+		rateButton.setLocation(0,0);
+			rateButton.setSize(100,30);
+		listButton.setLocation(0,0);
+			listButton.setSize(100,30);
+		listenerButton.setLocation(0,0);
+			listenerButton.setSize(100,30);
+		
+		//Add buttons to panels
+		consolePanel.add(console);
+		consoleInputPanel.add(consoleInput);
+		ratePanel.add(rateButton);
+		listPanel.add(listButton);
+		listenerPanel.add(listenerButton);
+		
+		//Add panels to Frame
+		add(console);
+		add(ratePanel);
+		add(listPanel);
+		add(listenerPanel);
+		add(consoleInputPanel);
+	}
+	
+	public static void init() {
+		GUI gui = new GUI();
+		gui.setLayout(null);
+		gui.setTitle("J-Net Distributed MD5 Hash Cracker");
+		gui.setSize(500,330);
+		
+		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gui.setVisible(true);
+	}
+}

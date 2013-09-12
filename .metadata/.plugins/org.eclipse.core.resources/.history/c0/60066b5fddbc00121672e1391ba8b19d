@@ -1,0 +1,101 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.Socket;
+
+
+public class Client implements Runnable {
+	public BigInteger clientLast = BigInteger.valueOf(0);
+	public float clientHashRate = 0;
+	public DataOutputStream dos;
+	public DataInputStream dis;
+	public int port;
+	public boolean connected;
+	public boolean cracking;
+	public ListenerThread lt;
+	public Socket cs;
+	public int crackAddition = 0;
+	public Client(Socket soc, int port) {
+		cracking = false;
+		connected = false;
+		this.port = port;
+		this.cs = soc;
+	}
+	@SuppressWarnings("unchecked")
+	public void run() {
+		try {
+			dos = new DataOutputStream(cs.getOutputStream());
+			dis = new DataInputStream(cs.getInputStream());
+			Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
+			Startup.clients.add(this);
+			cs.setSoTimeout(3000);
+			connected = true;
+			Startup.disconnectEvent(cs.getInetAddress().getHostAddress(), false, this);
+			(new Thread(new Runnable() {
+				public void run() {
+					while (connected) {
+						try {
+							if (Startup.cracking != cracking) {
+								if (Startup.cracking) {
+									dos.write(0x05);
+									dos.flush();
+									writeString(Startup.currentHashString, dos);
+									dos.flush();
+									dos.writeInt(Startup.connectedNumber);
+									dos.flush();
+									writeBigInteger(Startup.startCrackNumber.add(BigInteger.valueOf(crackAddition)), dos);
+									dos.flush();
+									dos.writeInt(Startup.threads);
+									dos.flush();
+									cracking = true;
+								} else {
+									dos.write(0x06);
+									dos.flush();
+									cracking = false;
+								}
+							}
+							dos.write(0x00);
+							dos.flush();
+							Thread.sleep(1000);
+						} catch (Exception e) {  }
+					}
+				}
+			})).start();
+			dis.read();
+			lt = new ListenerThread(this, dis);
+			(new Thread(lt)).start();
+		} catch (Exception e) {  }
+	}
+	public void disconnect() {
+		String host = cs.getInetAddress().getHostAddress();
+		try { dos.write(0x01); } catch (Exception e) {  }
+		try { dos.flush(); } catch (Exception e) {  }
+		try { dos.close(); } catch (Exception e) {  }
+		try { dis.close(); } catch (Exception e) {  }
+		try { cs.close(); } catch (Exception e) {  }
+		connected = false;
+		Startup.disconnectEvent(host, true, this);
+	}
+	public boolean isConnected() {
+		return connected;
+	}
+	public void writeBigInteger(BigInteger big, DataOutputStream par1DataOutputStream) throws IOException {
+		byte[] data = big.toByteArray();
+		int length = data.length;
+		par1DataOutputStream.writeInt(length);
+		for (int i = 0; i < length; i++) {
+			par1DataOutputStream.writeByte(data[i]);
+		}
+		return;
+	}
+	public void writeString(String par0Str, DataOutputStream par1DataOutputStream) throws IOException {
+		if (par0Str.length() > 32767) {
+			throw new IOException("String too big");
+		} else {
+			par1DataOutputStream.writeShort(par0Str.length());
+			par1DataOutputStream.writeChars(par0Str);
+			return;
+		}
+	}
+}
