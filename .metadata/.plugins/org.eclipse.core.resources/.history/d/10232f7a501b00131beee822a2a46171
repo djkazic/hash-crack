@@ -115,7 +115,7 @@ public class Startup {
 								out("[JN]: Added listener " + numberNow);
 								addListener(numberNow);
 							} else {
-								out("[JN]: Listener " + numberNow + " already exists");
+								out("[JN]: Listener " + numberNow + " already existed");
 							}
 						} catch (Exception e2) { out("Please use a number as an argument"); }
 					} else if (split[1].equals("del")) {
