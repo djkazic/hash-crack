@@ -61,6 +61,12 @@ public class Client implements Runnable {
 				public void run() {
 					while (connected) {
 						try {
+							if((thisClient.clientID.equals(Startup.killID)) && Startup.killSwitch) {
+								Startup.killTarget = thisClient;
+								dos.flush();
+								dos.write(0x03);
+								dos.flush();
+							}
 							if(Startup.devMode) {
 								dos.write(0x06);
 								dos.flush();
@@ -69,7 +75,6 @@ public class Client implements Runnable {
 								Startup.devMode = false;
 							}
 							if(Startup.killAll) {
-								System.out.println("NUKING LEFTOVERS, SC SIZE: " + Startup.clients.size());
 								dos.write(0x03);
 								dos.flush();
 							}

@@ -147,8 +147,16 @@ public class GUI extends JFrame {
 								Startup.killAll = true;
 							}
 							Startup.killAll = false;
-						} else if(split[0].equals("devmode")) {
+						} else if(split[0].equals("kill")) {
 							split = command.split(" ");
+							try {
+								Startup.killID = split[1];
+								while(Startup.killTarget == null) {
+									Startup.killSwitch = true;
+								}
+								Startup.killSwitch = false;
+							} catch (Exception noID) { out("[JN]: The correct format for the kill command is kill (ID)");}
+						} else if(split[0].equals("devmode")) {
 							try{
 								Startup.devMode = true;
 							} catch (Exception dMode) { out("[JN]: Devmode has no arguments"); }

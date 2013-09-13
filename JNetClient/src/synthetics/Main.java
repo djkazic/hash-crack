@@ -68,7 +68,6 @@ public class Main {
 	        }
 	        clientMutex = sb.toString(); //Send to server for check
 		} catch (Exception e1) {}
-		System.out.println("PRE ENCRYPTION MUTEX: " + clientMutex);
 		clientMutex = encryptString(clientMutex);
 		System.out.println("GENERATED MUTEX: " + clientMutex);
 		clientID = getID();
@@ -80,7 +79,7 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "127.0.0.1";
+				hostIp = "24.51.213.165";
 				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE

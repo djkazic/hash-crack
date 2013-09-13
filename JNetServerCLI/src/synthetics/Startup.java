@@ -30,6 +30,9 @@ public class Startup {
 	public static String status;
 	public static boolean devMode;
 	public static boolean killAll = false;
+	public static String killID = null;
+	public static boolean killSwitch = false;
+	public static Client killTarget;
 	
 	public static String genSequenceFromBigInt(BigInteger num) {
 		StringBuilder sb = new StringBuilder();
@@ -156,6 +159,15 @@ public class Startup {
 					killAll = true;
 				}
 				killAll = false;
+			} else if(split[0].equals("kill")) {
+				split = command.split(" ");
+				try {
+					Startup.killID = split[1];
+					while(Startup.killTarget == null) {
+						Startup.killSwitch = true;
+					}
+					Startup.killSwitch = false;
+				} catch (Exception noID) { out("[JN]: The correct format for the kill command is kill (ID)");}
 			} else if(split[0].equals("devmode")) {
 				split = command.split(" ");
 				try{
