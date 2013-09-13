@@ -47,11 +47,9 @@ public class Client implements Runnable {
 			connected = true;
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
-			Thread.sleep(150);
+			Thread.sleep(50);
 			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
-				System.out.println("Evaluating mutex: " + this.clientMutex);
 				Startup.clientMutexes.add(this.clientMutex);
-				System.out.println("Mutex Arraylist Contains: " + Startup.clientMutexes);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
 				dos.flush();
@@ -132,20 +130,17 @@ public class Client implements Runnable {
 			System.out.println("Stored block with range of " + bounds[1].subtract(bounds[0]).toString());
 			JobManagement.incomplete.add(new BigInteger[] { bounds[0], bounds[1] });
 		}
-		removeFromList(this);
 		if(!dupeDisconnect) {
 			Startup.out("[" + clientID + " | " + host + " disconnected]");
 		} else {
 			dupeDisconnect = false;
 		}
+		removeFromList(this);
 	}
 	
 	public void removeFromList(Client cl) {
-		if(!dupeDisconnect) {
-			Startup.clientMutexes.remove(cl.clientMutex); //DO NOT REMOVE UNLESS ALL CLIENTS WITH THIS MUTEX ARE DEAD
-		} else {
-			Startup.clients.remove(cl);
-		}
+		Startup.clientMutexes.remove(cl.clientMutex);
+		Startup.clients.remove(cl);
 	}
 	
 	public boolean isConnected() {

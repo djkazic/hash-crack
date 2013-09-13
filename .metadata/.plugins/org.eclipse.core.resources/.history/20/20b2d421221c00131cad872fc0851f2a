@@ -49,14 +49,14 @@ public class Client implements Runnable {
 			(new Thread(lt)).start();
 			Thread.sleep(150);
 			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
-				System.out.println("Evaluating mutex: " + this.clientMutex);
 				Startup.clientMutexes.add(this.clientMutex);
-				System.out.println("Mutex Arraylist Contains: " + Startup.clientMutexes);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
+				Startup.out("Duplicate!");
 				dos.flush();
 				dos.write(0x03);
 				dos.flush();
+				this.disconnect();
 				dupeDisconnect = true;
 			}
 			(new Thread(new Runnable() {
@@ -141,11 +141,8 @@ public class Client implements Runnable {
 	}
 	
 	public void removeFromList(Client cl) {
-		if(!dupeDisconnect) {
-			Startup.clientMutexes.remove(cl.clientMutex); //DO NOT REMOVE UNLESS ALL CLIENTS WITH THIS MUTEX ARE DEAD
-		} else {
-			Startup.clients.remove(cl);
-		}
+		Startup.clientMutexes.remove(cl.clientMutex);
+		Startup.clients.remove(cl);
 	}
 	
 	public boolean isConnected() {

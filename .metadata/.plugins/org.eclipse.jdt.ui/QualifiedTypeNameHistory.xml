@@ -21,7 +21,8 @@
 <fullyQualifiedTypeName name="java.net.SocketAddress"/>
 <fullyQualifiedTypeName name="java.net.InetSocketAddress"/>
 <fullyQualifiedTypeName name="java.util.UUID"/>
-<fullyQualifiedTypeName name="java.net.InetAddress"/>
 <fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="java.util.Formatter"/>
+<fullyQualifiedTypeName name="java.net.NetworkInterface"/>
+<fullyQualifiedTypeName name="java.net.InetAddress"/>
 </qualifiedTypeNameHistroy>

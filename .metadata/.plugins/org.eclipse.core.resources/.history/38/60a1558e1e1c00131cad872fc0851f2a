@@ -47,7 +47,6 @@ public class Main {
 	public static boolean firstHashSent = false;
 	public static String clientID;
 	public static String clientMutex;
-	public static boolean mutexSent = false;
 
 	public static void main (String args[]) {
 		new Main();
@@ -80,7 +79,7 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "127.0.0.1";
+				hostIp = "24.51.213.165";
 				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE
@@ -134,14 +133,11 @@ public class Main {
 						System.out.println("[Connected to Server]");
 						
 						//MUTEX SENDING
-						if(!mutexSent) {
-							dos.write(0x09);
-							dos.flush();
-							writeString(clientMutex, dos);
-							System.out.println("WROTE STRING HASH: " + clientMutex);
-							dos.flush();
-							mutexSent = true;
-						}
+						dos.write(0x09);
+						dos.flush();
+						writeString(clientMutex, dos);
+						System.out.println("WROTE STRING HASH: " + clientMutex);
+						dos.flush();
 						
 						lt = new CListenerThread(dis);
 						(new Thread(lt)).start();

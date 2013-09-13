@@ -23,7 +23,6 @@ public class SListenerThread implements Runnable {
 					break;
 				} else if (current == 0x09) {
 					c.clientMutex = readString(dis); //clientMutex get
-					System.out.println("I've got a mutex: " + c.clientMutex);
 				} else if (current == 0x02) {
 					c.clientHashRate = dis.readInt();
 				} else if (current == 0x03) {

@@ -80,7 +80,7 @@ public class Main {
 				System.out.println("[Dev Mode Enabled]");
 				(new Thread(new ServerFindThread())).start();
 			} else {
-				hostIp = "127.0.0.1";
+				hostIp = "192.168.1.10";
 				hostPort = 1800;
 			}
 			//INSERT THREAD TO SCAN HERE
@@ -140,7 +140,6 @@ public class Main {
 							writeString(clientMutex, dos);
 							System.out.println("WROTE STRING HASH: " + clientMutex);
 							dos.flush();
-							mutexSent = true;
 						}
 						
 						lt = new CListenerThread(dis);

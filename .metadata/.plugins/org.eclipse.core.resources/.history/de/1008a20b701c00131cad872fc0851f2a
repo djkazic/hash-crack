@@ -54,6 +54,7 @@ public class Client implements Runnable {
 				System.out.println("Mutex Arraylist Contains: " + Startup.clientMutexes);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
+				Startup.out("Duplicate!");
 				dos.flush();
 				dos.write(0x03);
 				dos.flush();
