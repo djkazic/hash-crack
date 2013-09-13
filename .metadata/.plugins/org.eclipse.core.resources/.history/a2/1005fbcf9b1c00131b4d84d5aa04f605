@@ -9,6 +9,7 @@ import synthetics.JobManagement;
 import synthetics.Startup;
 
 public class Client implements Runnable {
+	public static boolean dupeDisconnect = false;
 	public String clientMutex;
 	public int average = -1;
 	public boolean sentStop = false;
@@ -25,7 +26,7 @@ public class Client implements Runnable {
 	public SListenerThread lt;
 	public Socket cs;
 	public Client thisClient;
-	public int clientID;
+	public String clientID;
 	public Client(Socket soc) {
 		connected = false;
 		this.cs = soc;
@@ -46,17 +47,29 @@ public class Client implements Runnable {
 			connected = true;
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
-			Thread.sleep(5);
-			if(!Startup.clientMutexes.contains(this.clientMutex)) {
+			Thread.sleep(150);
+			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
+				System.out.println("Evaluating mutex: " + this.clientMutex);
 				Startup.clientMutexes.add(this.clientMutex);
+				System.out.println("Mutex Arraylist Contains: " + Startup.clientMutexes);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
-				this.disconnect();
+				Startup.out("Duplicate!");
+				dos.flush();
+				dos.write(0x03);
+				dos.flush();
+				dupeDisconnect = true;
 			}
 			(new Thread(new Runnable() {
 				public void run() {
 					while (connected) {
 						try {
+							if((thisClient.clientID.equals(Startup.killID)) && Startup.killSwitch) {
+								Startup.killTarget = thisClient;
+								dos.flush();
+								dos.write(0x03);
+								dos.flush();
+							}
 							if(Startup.devMode) {
 								dos.write(0x06);
 								dos.flush();
@@ -67,7 +80,6 @@ public class Client implements Runnable {
 							if(Startup.killAll) {
 								dos.write(0x03);
 								dos.flush();
-								Startup.killAll = false;
 							}
 							if (Startup.cracking) {
 								sentStop = false;
@@ -121,13 +133,22 @@ public class Client implements Runnable {
 			System.out.println("Stored block with range of " + bounds[1].subtract(bounds[0]).toString());
 			JobManagement.incomplete.add(new BigInteger[] { bounds[0], bounds[1] });
 		}
-		Startup.out(clientID + host + " disconnected");
 		removeFromList(this);
+		if(!dupeDisconnect) {
+			Startup.out("[" + clientID + " | " + host + " disconnected]");
+		} else {
+			dupeDisconnect = false;
+		}
 	}
 	
 	public void removeFromList(Client cl) {
-		Startup.clients.remove(cl);
+		if(!dupeDisconnect) {
+			Startup.clientMutexes.remove(cl.clientMutex); //DO NOT REMOVE UNLESS ALL CLIENTS WITH THIS MUTEX ARE DEAD
+		} else {
+			Startup.clients.remove(cl);
+		}
 	}
+	
 	public boolean isConnected() {
 		return connected;
 	}

@@ -48,12 +48,12 @@ public class Client implements Runnable {
 			lt = new SListenerThread(this, dis);
 			(new Thread(lt)).start();
 			Thread.sleep(150);
-			if(!Startup.clientMutexes.contains(this.clientMutex) && this.clientMutex != null) {
-				System.out.println("Evaluating mutex: " + this.clientMutex);
+			if(!Startup.clientMutexes.contains(this.clientMutex)) {
+				if(this.clientMutex == null) { Thread.sleep(1500); }
 				Startup.clientMutexes.add(this.clientMutex);
-				System.out.println("Mutex Arraylist Contains: " + Startup.clientMutexes);
 				Startup.out("Inbound From Client IP: " + cs.getInetAddress().getHostAddress() + " PORT: " + cs.getPort());
 			} else {
+				Startup.out("Duplicate!");
 				dos.flush();
 				dos.write(0x03);
 				dos.flush();

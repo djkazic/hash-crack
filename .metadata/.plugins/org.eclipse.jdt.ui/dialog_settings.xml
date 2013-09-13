@@ -37,8 +37,8 @@
 		<item value="false" key="jarOptionsWizardPage.STORE_USE_SRC_FOLDERS"/>
 		<item value="" key="jarOptionsWizardPage.DESCRIPTION_LOCATION"/>
 		<list key="JarPackageWizardPage.DESTINATION_NAMES_ID">
-			<item value="C:\Users\Elite\Desktop\UniClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\UniServer.jar"/>
+			<item value="C:\Users\Elite\Desktop\UniClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\EXTClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\LocalClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\CloudServer.jar"/>
@@ -49,17 +49,17 @@
 		<item value="600" key="width"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="C:\Users\Elite\Desktop\UniClient.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="G:\UniClient.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
 		<item value="Main - JNetClient" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="C:\Users\Elite\Desktop\J-Net.xml" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="G:\UniClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\UniClient.jar"/>
 			<item value="G:\BetaClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\BetaClient.jar"/>
 			<item value="C:\Users\Elite\Desktop\TestClient.jar"/>
-			<item value="C:\Users\Elite\Desktop\J-Net Server.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
 			<item value="C:\Users\Elite\Desktop\J-Net.xml"/>
