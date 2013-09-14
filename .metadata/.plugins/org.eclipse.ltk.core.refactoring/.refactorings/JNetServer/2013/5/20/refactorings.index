@@ -1,9 +1,0 @@
-1368497135298	Infer generic type arguments
-1368497142870	Infer generic type arguments
-1368497162488	Convert local variable 'in' to field
-1368497181457	Infer generic type arguments
-1368538580562	Delete element
-1368580119829	Convert local variable 'total' to field
-1368649713935	Infer generic type arguments
-1368720782976	Rename type 'ListenerThread'
-1368746912087	Encapsulate field 'clientHashRate'
