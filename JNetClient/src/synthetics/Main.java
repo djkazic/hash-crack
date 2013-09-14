@@ -171,8 +171,6 @@ public class Main {
 																rateArray[0] = (int) chashRate;
 															}
 														}
-														//System.out.println("INT [0] " + rateArray[0]);
-														//System.out.println("INT [1] " + rateArray[1]);
 													}
 												}
 												//System.out.println("INT ARRAY CONTENTS: " + Arrays.toString(rateArray));
@@ -184,7 +182,6 @@ public class Main {
 												
 												if(chashRate != 0 && firstHashSent) {
 													lastKnownHashes = (int) chashRate;
-													//System.out.println(chashRate);
 												}
 												
 												if(chashRate == 0 && lastKnownHashes == 0 && firstHashSent) {
