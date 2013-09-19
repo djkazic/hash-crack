@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Wed Sep 18 19:19:37 EDT 2013
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=C\:\\Users\\Elite\\Desktop\\JNetClient_fat.jar
+manifest.mergeall=true
+manifest.mainclass=synthetics.Main
+manifest.file=<createnew>
+jarname.isextern=true
+onejar.expand=
+excludes=
+includes=

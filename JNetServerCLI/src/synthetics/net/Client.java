@@ -38,8 +38,7 @@ public class Client implements Runnable {
 		try {
 			dos = new DataOutputStream(cs.getOutputStream());
 			dis = new DataInputStream(cs.getInputStream());
-			//if(!Startup.clients.contains(this)) { //change to ArrayList of clientIDs
-			Startup.clients.add(this); //keep this
+			Startup.clients.add(this);
 			cs.setSoTimeout(3000);
 			dos.write(0x00);
 			dos.flush();
@@ -142,7 +141,7 @@ public class Client implements Runnable {
 	
 	public void removeFromList(Client cl) {
 		if(!dupeDisconnect) {
-			Startup.clientMutexes.remove(cl.clientMutex); //DO NOT REMOVE UNLESS ALL CLIENTS WITH THIS MUTEX ARE DEAD
+			Startup.clientMutexes.remove(cl.clientMutex);
 		} else {
 			Startup.clients.remove(cl);
 		}

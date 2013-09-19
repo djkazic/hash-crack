@@ -180,7 +180,6 @@ public class Startup {
 			} else if (split[0].equals("crack")) {
 				try {
 					if (!Startup.cracking) {
-						//String arguments = command.replaceAll(split[1], "");
 						Startup.currentHashString = split[1];
 						Startup.array = Startup.comblist;
 					}

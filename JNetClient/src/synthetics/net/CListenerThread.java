@@ -1,7 +1,9 @@
-package synthetics;
+package synthetics.net;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+
+import synthetics.Main;
 
 public class CListenerThread implements Runnable {
 	public DataInputStream dis;
